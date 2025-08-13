@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ilo.iloな日干支</title>
+<style>
+  /* 追加：htmlとbodyに高さ100%を指定して背景を画面いっぱいに安定表示 */
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+    text-align: center;
+    background-image: url('ilo.iloback.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card {
+    position: absolute;
+    top: 45%; /* ど真ん中より少し上 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%; /* 丸型 */
+    padding: 50px;
+    width: 280px;
+    height: 280px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    font-family: 'Futura', sans-serif;
+    margin: 0;
+    font-size: 2.62em;
+  }
+
+  .sub {
+    font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 1.24em;
+  }
+
+  input[type="date"] {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.2em;
+  }
+
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #ff68b6;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  .result {
+    margin-top: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+  }
+
+  .reading {
+    font-size: 0.7em;
+    font-weight: normal;
+    margin-top: -5px;
+    color: #444;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>ilo.ilo</h1>
+    <div class="sub">な日干支</div>
+    <input type="date" id="dateInput" />
+    <button onclick="calculate()">CHECK!</button>
+    <div class="result" id="result"></div>
+    <div class="reading" id="reading"></div>
+  </div>
+
+<script>
+  const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+  const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
+  const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+  const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
+
+  const baseDate = new Date(1984, 2, 31); // 3月31日
+  const baseIndex = 0; // 甲子
+
+  function calculate() {
+    const input = document.getElementById("dateInput").value;
+    if (!input) return;
+
+    const date = new Date(input);
+    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+    const index = (baseIndex + diffDays % 60 + 60) % 60;
+
+    const stem = stems[index % 10];
+    const branch = branches[index % 12];
+    const stemR = stemsReading[index % 10];
+    const branchR = branchesReading[index % 12];
+
+    document.getElementById("result").innerText = stem + branch;
+    document.getElementById("reading").innerText = stemR + branchR;
+  }
+</script>
+</body>
+</html>
