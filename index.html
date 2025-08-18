@@ -21,6 +21,7 @@
     background-size: cover;
   }
 
+  /* 中央寄せ */
   .center {
     position: absolute;
     top: 50%;
@@ -32,6 +33,7 @@
     gap: 20px;
   }
 
+  /* 丸いカード */
   .card {
     background: rgba(255, 255, 255, 0.6);
     border-radius: 50%;
@@ -87,30 +89,35 @@
     color: #444;
   }
 
-  /* SNSシェアボタン */
+  /* SNSボタンの並び */
   .share-buttons {
     display: flex;
-    gap: 12px;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 12px;
   }
 
-  .share-buttons a,
-  .share-buttons button {
+  .share-btn {
+    box-sizing: border-box;
     text-decoration: none;
-    font-size: 0.9em;
     color: #fff;
     background: transparent;
     border: 2px solid #fff;
+    border-radius: 9999px;
     padding: 8px 16px;
-    border-radius: 9999px; /* ピル型 */
+    line-height: 1;
+    font-size: 0.9em;
+    letter-spacing: .02em;
     display: inline-block;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    text-align: center;
+    min-width: 96px; /* 👈 幅そろえる */
+    white-space: nowrap;
+    transition: background .2s ease;
   }
+  .share-btn:hover { background: rgba(255,255,255,.2); }
 
-  .share-buttons a:hover,
-  .share-buttons button:hover {
-    background: rgba(255,255,255,0.2);
+  @media (min-width:480px){
+    .share-btn{ min-width:112px; }
   }
 
   /* 応援ボタン */
@@ -139,9 +146,9 @@
 
     <!-- SNSシェアボタン -->
     <div class="share-buttons">
-      <a id="share-x" href="#" target="_blank" rel="noopener">X</a>
-      <a id="share-line" href="#" target="_blank" rel="noopener">LINE</a>
-      <button onclick="copyLink()" type="button">📸 Instagram</button>
+      <a id="share-x"    class="share-btn" href="#" target="_blank" rel="noopener">X</a>
+      <a id="share-line" class="share-btn" href="#" target="_blank" rel="noopener">LINE</a>
+      <button class="share-btn" type="button" onclick="copyLink()">Instagram</button>
     </div>
 
     <!-- 応援ボタン -->
@@ -154,8 +161,8 @@
     const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
 
-    const baseDate = new Date(1984, 2, 31);
-    const baseIndex = 0;
+    const baseDate = new Date(1984, 2, 31); // 3月31日
+    const baseIndex = 0; // 甲子
 
     function calculate() {
       const input = document.getElementById("dateInput").value;
@@ -173,36 +180,28 @@
       document.getElementById("result").innerText = stem + branch;
       document.getElementById("reading").innerText = stemR + branchR;
 
-      updateShareLinks(stem, branch, stemR, branchR);
-    }
+      // SNSリンク更新
+      const shareUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent(stem + branch + " (" + stemR + branchR + ") の日干支をチェック！");
 
-    function updateShareLinks(stem, branch, stemR, branchR) {
-      const url = location.href;
-      const text = `今日の日干支は「${stem}${branch}（${stemR}${branchR}）」でした！`;
-      const encodedURL = encodeURIComponent(url);
-      const encodedText = encodeURIComponent(text + ' #日干支 #iloilo');
+      document.getElementById("share-x").href =
+        "https://twitter.com/intent/tweet?text=" + shareText + "&url=" + shareUrl;
 
-      document.getElementById('share-x').href =
-        `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedURL}`;
-
-      document.getElementById('share-line').href =
-        `https://social-plugins.line.me/lineit/share?url=${encodedURL}`;
+      document.getElementById("share-line").href =
+        "https://line.me/R/msg/text/?" + shareText + "%20" + shareUrl;
     }
 
     function copyLink() {
-      navigator.clipboard.writeText(location.href)
-        .then(() => alert("リンクをコピーしました！InstagramにシェアOK📲"))
-        .catch(err => console.error("コピーに失敗しました: ", err));
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert("リンクをコピーしました！Instagramの投稿に貼り付けてね📋");
+      });
     }
 
-    // 初期表示（今日の日付）
-    window.onload = () => {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, "0");
-      const dd = String(today.getDate()).padStart(2, "0");
-      const todayStr = `${yyyy}-${mm}-${dd}`;
-      document.getElementById("dateInput").value = todayStr;
+    // 初期日付を設定して自動計算
+    window.onload = function() {
+      const dateInput = document.getElementById("dateInput");
+      dateInput.value = "2025-08-18"; // ←初期値
       calculate();
     };
   </script>
