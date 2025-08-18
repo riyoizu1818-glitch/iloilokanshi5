@@ -119,30 +119,41 @@
   </div>
 
   <script>
-    const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
-    const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
-    const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
-    const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
+  const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+  const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
+  const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+  const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
 
-    const baseDate = new Date(1984, 2, 31); // 3月31日
-    const baseIndex = 0; // 甲子
+  const baseDate = new Date(1984, 2, 31); // 3月31日
+  const baseIndex = 0; // 甲子
 
-    function calculate() {
-      const input = document.getElementById("dateInput").value;
-      if (!input) return;
+  function calculate() {
+    const input = document.getElementById("dateInput").value;
+    if (!input) return;
 
-      const date = new Date(input);
-      const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
-      const index = (baseIndex + diffDays % 60 + 60) % 60;
+    const date = new Date(input);
+    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+    const index = (baseIndex + diffDays % 60 + 60) % 60;
 
-      const stem = stems[index % 10];
-      const branch = branches[index % 12];
-      const stemR = stemsReading[index % 10];
-      const branchR = branchesReading[index % 12];
+    const stem = stems[index % 10];
+    const branch = branches[index % 12];
+    const stemR = stemsReading[index % 10];
+    const branchR = branchesReading[index % 12];
 
-      document.getElementById("result").innerText = stem + branch;
-      document.getElementById("reading").innerText = stemR + branchR;
-    }
-  </script>
+    document.getElementById("result").innerText = stem + branch;
+    document.getElementById("reading").innerText = stemR + branchR;
+  }
+
+  // ページ読み込み時に今日の日付をセットして自動で計算
+  window.onload = function() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("dateInput").value = todayStr;
+    calculate();
+  }
+</script>
 </body>
 </html>
