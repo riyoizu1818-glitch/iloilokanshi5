@@ -21,6 +21,7 @@
     background-size: cover;
   }
 
+  /* 中央寄せ */
   .center {
     position: absolute;
     top: 50%;
@@ -32,12 +33,13 @@
     gap: 20px;
   }
 
+  /* 丸いカード */
   .card {
     background: rgba(255, 255, 255, 0.6);
     border-radius: 50%;
     padding: 40px;
     width: 240px;
-    height: 260px; /* ラベル分だけ高さを少し伸ばす */
+    height: 240px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
@@ -55,24 +57,17 @@
     font-size: 1.24em;
   }
 
-  label {
-    font-size: 0.9em;
-    color: #444;
-    margin-top: 12px;
-    margin-bottom: 4px;
-    display: block;
-  }
-
   input[type="date"] {
-    padding: 8px;
+    padding: 10px;
+    margin-top: 15px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    font-size: 1.1em;
+    font-size: 1.2em;
   }
 
   button {
-    margin-top: 12px;
-    padding: 8px 18px;
+    margin-top: 15px;
+    padding: 10px 20px;
     background-color: #ff68b6;
     color: white;
     border: none;
@@ -82,8 +77,8 @@
   }
 
   .result {
-    margin-top: 15px;
-    font-size: 1.6em;
+    margin-top: 20px;
+    font-size: 1.8em;
     font-weight: bold;
   }
 
@@ -94,22 +89,38 @@
     color: #444;
   }
 
+  /* SNSボタンの並び */
   .share-buttons {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
   }
 
   .share-btn {
-    border: 1px solid #fff;
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 0.9em;
+    box-sizing: border-box;
+    text-decoration: none;
     color: #fff;
     background: transparent;
-    text-decoration: none;
-    font-weight: 600;
+    border: 2px solid #fff;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    line-height: 1;
+    font-size: 0.9em;
+    letter-spacing: .02em;
+    display: inline-block;
+    text-align: center;
+    min-width: 96px; /* 👈 幅そろえる */
+    white-space: nowrap;
+    transition: background .2s ease;
+    font-weight: 600; /* ←ここを追加・調整 */  }
+  .share-btn:hover { background: rgba(255,255,255,.2); }
+
+  @media (min-width:480px){
+    .share-btn{ min-width:112px; }
   }
 
+  /* 応援ボタン */
   .support-btn {
     text-decoration: none;
     font-size: 1em;
@@ -127,23 +138,21 @@
     <div class="card">
       <h1>ilo.ilo</h1>
       <div class="sub">な日干支</div>
-
-      <!-- ラベル追加 -->
-      <label for="dateInput">調べたい日付は？</label>
       <input type="date" id="dateInput" />
-
       <button onclick="calculate()">CHECK!</button>
       <div class="result" id="result"></div>
       <div class="reading" id="reading"></div>
     </div>
 
+    <!-- SNSシェアボタン -->
     <div class="share-buttons">
-      <a class="share-btn" href="https://twitter.com/intent/tweet?text=あなたの生まれた日の干支もチェック！&url=https://your-site-url" target="_blank">X</a>
-      <a class="share-btn" href="https://social-plugins.line.me/lineit/share?url=https://your-site-url" target="_blank">LINE</a>
-      <a class="share-btn" href="https://www.instagram.com/" target="_blank">Instagram</a>
+      <a id="share-x"    class="share-btn" href="#" target="_blank" rel="noopener">X</a>
+      <a id="share-line" class="share-btn" href="#" target="_blank" rel="noopener">LINE</a>
+      <button class="share-btn" type="button" onclick="copyLink()">Instagram</button>
     </div>
 
-    <a class="support-btn" href="https://ofuse.me/izuiloilo" target="_blank">izuを応援する</a>
+    <!-- 応援ボタン -->
+    <a class="support-btn" href="https://ofuse.me/izuiloilo" target="_blank">☕ izuを応援する</a>
   </div>
 
   <script>
@@ -152,8 +161,8 @@
     const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
     const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
 
-    const baseDate = new Date(1984, 2, 31);
-    const baseIndex = 0;
+    const baseDate = new Date(1984, 2, 31); // 3月31日
+    const baseIndex = 0; // 甲子
 
     function calculate() {
       const input = document.getElementById("dateInput").value;
@@ -170,7 +179,31 @@
 
       document.getElementById("result").innerText = stem + branch;
       document.getElementById("reading").innerText = stemR + branchR;
+
+      // SNSリンク更新
+      const shareUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent("生まれた日で分かる、日干支（にっかんし）チェック👉");
+
+      document.getElementById("share-x").href =
+        "https://twitter.com/intent/tweet?text=" + shareText + "&url=" + shareUrl;
+
+      document.getElementById("share-line").href =
+        "https://line.me/R/msg/text/?" + shareText + "%20" + shareUrl;
     }
+
+    function copyLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert("リンクをコピーしました！InstagramにシェアOK📲");
+      });
+    }
+
+    // 初期日付を設定して自動計算
+    window.onload = function() {
+      const dateInput = document.getElementById("dateInput");
+      dateInput.value = "2025-08-18"; // ←初期値
+      calculate();
+    };
   </script>
 </body>
 </html>
