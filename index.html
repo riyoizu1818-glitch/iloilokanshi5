@@ -113,7 +113,7 @@
     min-width: 96px; /* 👈 幅そろえる */
     white-space: nowrap;
     transition: background .2s ease;
-  }
+    font-weight: 600; /* ←ここを追加・調整 */  }
   .share-btn:hover { background: rgba(255,255,255,.2); }
 
   @media (min-width:480px){
@@ -182,7 +182,7 @@
 
       // SNSリンク更新
       const shareUrl = encodeURIComponent(window.location.href);
-      const shareText = encodeURIComponent("生まれた日の干支もチェック👉");
+      const shareText = encodeURIComponent("生まれた日で分かる、日干支（にっかんし）チェック👉");
 
       document.getElementById("share-x").href =
         "https://twitter.com/intent/tweet?text=" + shareText + "&url=" + shareUrl;
