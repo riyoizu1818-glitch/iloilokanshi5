@@ -5,15 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ilo.iloな日干支</title>
 <style>
-  :root{
-    --brand: #ff68b6;          /* メインピンク */
-    --brand-2: #ff9dce;        /* 差し色ピンク */
-    --ink: #333;
-    --glass-bg: rgba(255,255,255,.55);
-    --glass-border: rgba(255,255,255,.6);
-    --ring: rgba(255,104,182,.35);
-  }
-
   html, body {
     height: 100%;
     margin: 0;
@@ -28,156 +19,130 @@
     background-attachment: fixed;
     background-position: center center;
     background-size: cover;
-
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
   }
 
-  .main {
-    flex: 1;
+  /* 追加：中央寄せ用ラッパー（カードとボタンをまとめる） */
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
-    flex-direction: column;
+    flex-direction: column;   /* 下に積む */
     align-items: center;
-    justify-content: center;
-    gap: 20px;
+    gap: 20px;                /* カードとボタンの間隔 */
   }
 
+  /* 丸いカードの見た目 */
   .card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 24px;
-    padding: 40px;
-    width: min(88vw, 360px);
-    box-shadow: 0 10px 30px rgba(0,0,0,.08);
-
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    padding: 50px;
+    width: 280px;
+    height: 280px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
   }
 
   h1 {
-    margin: 0 0 4px;
-    font-size: clamp(28px, 6vw, 40px);
-    letter-spacing: .02em;
+    font-family: 'Futura', sans-serif;
+    margin: 0;
+    font-size: 2.62em;
   }
 
   .sub {
-    margin-bottom: 14px;
-    font-size: clamp(14px, 3.2vw, 18px);
-    color: #555;
+    font-size: 1.24em;
   }
 
   input[type="date"] {
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(0,0,0,.1);
-    font-size: 1rem;
-    background: rgba(255,255,255,.9);
-    outline: none;
-  }
-  input[type="date"]:focus {
-    box-shadow: 0 0 0 6px var(--ring);
-    border-color: var(--brand);
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.2em;
   }
 
-  .btn {
-    display: inline-block;
-    margin-top: 14px;
-    padding: 12px 22px;
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #ff68b6;
+    color: white;
     border: none;
-    border-radius: 999px;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 20px;
+    font-size: 1em;
     cursor: pointer;
-    text-decoration: none;
-    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-    outline: none;
   }
-  .btn:focus-visible { box-shadow: 0 0 0 6px var(--ring); }
-
-  .btn-primary {
-    color: #fff;
-    background: linear-gradient(180deg, var(--brand), var(--brand-2));
-    box-shadow: 0 8px 20px rgba(255,104,182,.25);
-  }
-  .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.03); }
-  .btn-primary:active { transform: translateY(0); filter: brightness(.98); }
-
-  .btn-support {
-    color: #fff;
-    background: linear-gradient(180deg, #ff7f50, #ff9966);
-    box-shadow: 0 8px 20px rgba(255,127,80,.25);
-  }
-  .btn-support:hover { transform: translateY(-1px); filter: brightness(1.04); }
-  .btn-support:active { transform: translateY(0); filter: brightness(.98); }
 
   .result {
-    margin-top: 16px;
+    margin-top: 20px;
     font-size: 1.8em;
-    font-weight: 700;
-    color: var(--ink);
+    font-weight: bold;
   }
+
   .reading {
-    font-size: .9em;
-    margin-top: 2px;
+    font-size: 0.7em;
+    font-weight: normal;
+    margin-top: -5px;
     color: #444;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .btn { transition: none; }
+  /* 応援ボタンの見た目（display:inline-block を指定） */
+  .support-btn {
+    text-decoration: none;
+    font-size: 1.2em;
+    color: #fff;
+    background: #ff7f50;
+    padding: 12px 25px;
+    border-radius: 10px;
+    display: inline-block;
   }
 </style>
 </head>
 <body>
-  <div class="main">
+
+  <!-- 中央にカードとボタンを縦に並べる -->
+  <div class="center">
     <div class="card">
       <h1>ilo.ilo</h1>
       <div class="sub">な日干支</div>
       <input type="date" id="dateInput" />
-      <button class="btn btn-primary" onclick="calculate()">CHECK!</button>
+      <button onclick="calculate()">CHECK!</button>
       <div class="result" id="result"></div>
       <div class="reading" id="reading"></div>
     </div>
 
-    <div class="support">
-      <a class="btn btn-support" href="https://ofuse.me/izuiloilo" target="_blank" rel="noopener">
-        ☕ izuを応援する
-      </a>
-      <div style="font-size:.9rem; color:#444; margin-top:8px;">
-        応援いただけるとプチ解説PDFづくりがはかどります ✨
-      </div>
-    </div>
+    <!-- カードの真下に出る応援ボタン -->
+    <a class="support-btn" href="https://ofuse.me/izuiloilo" target="_blank">☕ izuを応援する</a>
   </div>
 
-<script>
-  const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
-  const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
-  const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
-  const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
+  <script>
+    const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+    const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
+    const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+    const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
 
-  const baseDate = new Date(1984, 2, 31); // 3月31日
-  const baseIndex = 0; // 甲子
+    const baseDate = new Date(1984, 2, 31); // 3月31日
+    const baseIndex = 0; // 甲子
 
-  function calculate() {
-    const input = document.getElementById("dateInput").value;
-    if (!input) return;
+    function calculate() {
+      const input = document.getElementById("dateInput").value;
+      if (!input) return;
 
-    const date = new Date(input);
-    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
-    const index = (baseIndex + diffDays % 60 + 60) % 60;
+      const date = new Date(input);
+      const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+      const index = (baseIndex + diffDays % 60 + 60) % 60;
 
-    const stem = stems[index % 10];
-    const branch = branches[index % 12];
-    const stemR = stemsReading[index % 10];
-    const branchR = branchesReading[index % 12];
+      const stem = stems[index % 10];
+      const branch = branches[index % 12];
+      const stemR = stemsReading[index % 10];
+      const branchR = branchesReading[index % 12];
 
-    document.getElementById("result").innerText = stem + branch;
-    document.getElementById("reading").innerText = stemR + branchR;
-  }
-</script>
+      document.getElementById("result").innerText = stem + branch;
+      document.getElementById("reading").innerText = stemR + branchR;
+    }
+  </script>
 </body>
 </html>
