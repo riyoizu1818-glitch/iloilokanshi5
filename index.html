@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ilo.iloな日干支</title>
 <style>
-  /* 追加：htmlとbodyに高さ100%を指定して背景を画面いっぱいに安定表示 */
   html, body {
     height: 100%;
     margin: 0;
@@ -20,17 +19,24 @@
     background-attachment: fixed;
     background-position: center center;
     background-size: cover;
-    margin: 0;
-    padding: 0;
   }
 
-  .card {
+  /* 追加：中央寄せ用ラッパー（カードとボタンをまとめる） */
+  .center {
     position: absolute;
-    top: 45%; /* ど真ん中より少し上 */
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;   /* 下に積む */
+    align-items: center;
+    gap: 20px;                /* カードとボタンの間隔 */
+  }
+
+  /* 丸いカードの見た目 */
+  .card {
     background: rgba(255, 255, 255, 0.6);
-    border-radius: 50%; /* 丸型 */
+    border-radius: 50%;
     padding: 50px;
     width: 280px;
     height: 280px;
@@ -48,7 +54,6 @@
   }
 
   .sub {
-    font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
     font-size: 1.24em;
   }
 
@@ -83,50 +88,61 @@
     margin-top: -5px;
     color: #444;
   }
+
+  /* 応援ボタンの見た目（display:inline-block を指定） */
+  .support-btn {
+    text-decoration: none;
+    font-size: 1.2em;
+    color: #fff;
+    background: #ff7f50;
+    padding: 12px 25px;
+    border-radius: 10px;
+    display: inline-block;
+  }
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>ilo.ilo</h1>
-    <div class="sub">な日干支</div>
-    <input type="date" id="dateInput" />
-    <button onclick="calculate()">CHECK!</button>
-    <div class="result" id="result"></div>
-    <div class="reading" id="reading"></div>
+
+  <!-- 中央にカードとボタンを縦に並べる -->
+  <div class="center">
+    <div class="card">
+      <h1>ilo.ilo</h1>
+      <div class="sub">な日干支</div>
+      <input type="date" id="dateInput" />
+      <button onclick="calculate()">CHECK!</button>
+      <div class="result" id="result"></div>
+      <div class="reading" id="reading"></div>
+    </div>
+
+    <!-- カードの真下に出る応援ボタン -->
+    <a class="support-btn" href="https://ofuse.me/izuiloilo" target="_blank">☕ izuを応援する</a>
   </div>
 
-<script>
-  const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
-  const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
-  const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
-  const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
+  <script>
+    const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+    const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
+    const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+    const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
 
-  const baseDate = new Date(1984, 2, 31); // 3月31日
-  const baseIndex = 0; // 甲子
+    const baseDate = new Date(1984, 2, 31); // 3月31日
+    const baseIndex = 0; // 甲子
 
-  function calculate() {
-    const input = document.getElementById("dateInput").value;
-    if (!input) return;
+    function calculate() {
+      const input = document.getElementById("dateInput").value;
+      if (!input) return;
 
-    const date = new Date(input);
-    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
-    const index = (baseIndex + diffDays % 60 + 60) % 60;
+      const date = new Date(input);
+      const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+      const index = (baseIndex + diffDays % 60 + 60) % 60;
 
-    const stem = stems[index % 10];
-    const branch = branches[index % 12];
-    const stemR = stemsReading[index % 10];
-    const branchR = branchesReading[index % 12];
+      const stem = stems[index % 10];
+      const branch = branches[index % 12];
+      const stemR = stemsReading[index % 10];
+      const branchR = branchesReading[index % 12];
 
-    document.getElementById("result").innerText = stem + branch;
-    document.getElementById("reading").innerText = stemR + branchR;
-  }
-</script>
- <div style="text-align:center; margin:30px 0; clear:both;">
-  <a href="https://ofuse.me/izuiloilo" target="_blank" 
-     style="text-decoration:none; font-size:1.2em; color:#fff; 
-            background:#ff7f50; padding:12px 25px; border-radius:10px;">
-    ☕ izuを応援する
-  </a>
-</div>
+      document.getElementById("result").innerText = stem + branch;
+      document.getElementById("reading").innerText = stemR + branchR;
+    }
+  </script>
 </body>
 </html>
