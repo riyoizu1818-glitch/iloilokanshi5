@@ -1,37 +1,178 @@
-<script>
-  const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
-  const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
-  const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
-  const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
-
-  const baseDate = new Date(1984, 2, 31); // 3月31日
-  const baseIndex = 0; // 甲子
-
-  function calculate() {
-    const input = document.getElementById("dateInput").value;
-    if (!input) return;
-
-    const date = new Date(input);
-    const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
-    const index = (baseIndex + diffDays % 60 + 60) % 60;
-
-    const stem = stems[index % 10];
-    const branch = branches[index % 12];
-    const stemR = stemsReading[index % 10];
-    const branchR = branchesReading[index % 12];
-
-    document.getElementById("result").innerText = stem + branch;
-    document.getElementById("reading").innerText = stemR + branchR;
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ilo.iloな日干支</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
   }
 
-  // ページ読み込み時に今日の日付をセットして自動で計算
-  window.onload = function() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, "0");
-    const dd = String(today.getDate()).padStart(2, "0");
-    const todayStr = `${yyyy}-${mm}-${dd}`;
-    document.getElementById("dateInput").value = todayStr;
-    calculate();
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+    text-align: center;
+    background-image: url('iloiloback.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: cover;
   }
-</script>
+
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    padding: 40px;
+    width: 240px;
+    height: 240px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    font-family: 'Futura', sans-serif;
+    margin: 0;
+    font-size: 2.62em;
+  }
+
+  .sub {
+    font-size: 1.24em;
+  }
+
+  input[type="date"] {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.2em;
+  }
+
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #ff68b6;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  .result {
+    margin-top: 20px;
+    font-size: 1.8em;
+    font-weight: bold;
+  }
+
+  .reading {
+    font-size: 0.7em;
+    font-weight: normal;
+    margin-top: -5px;
+    color: #444;
+  }
+
+  /* SNSボタンの共通デザイン */
+  .share-buttons a,
+  .share-buttons button {
+    text-decoration: none;
+    font-size: 1em;
+    color: #fff;
+    background: #ff7f50;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* 応援ボタン */
+  .support-btn {
+    text-decoration: none;
+    font-size: 1em;
+    color: #fff;
+    background: #ff7f50;
+    padding: 8px 18px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+  <div class="center">
+    <!-- 丸いカード -->
+    <div class="card">
+      <h1>ilo.ilo</h1>
+      <div class="sub">な日干支</div>
+      <input type="date" id="dateInput" />
+      <button onclick="calculate()">CHECK!</button>
+      <div class="result" id="result">----</div>
+      <div class="reading" id="reading">生年月日を選んでね</div>
+    </div>
+
+    <!-- SNSシェアボタン -->
+    <div class="share-buttons">
+      <a href="https://twitter.com/intent/tweet?text=今日の日干支をチェックしてみたよ！&url=https://あなたのサイトURL" target="_blank">🐦 Twitter</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://あなたのサイトURL" target="_blank">📘 Facebook</a>
+      <a href="https://social-plugins.line.me/lineit/share?url=https://あなたのサイトURL" target="_blank">💚 LINE</a>
+      <button onclick="copyLink()">📸 Instagram</button>
+    </div>
+
+    <!-- 応援ボタン -->
+    <a class="support-btn" href="https://ofuse.me/izuiloilo" target="_blank">☕ izuを応援する</a>
+  </div>
+
+  <script>
+    const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+    const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
+    const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+    const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
+
+    const baseDate = new Date(1984, 2, 31); // 3月31日
+    const baseIndex = 0; // 甲子
+
+    function calculate() {
+      const input = document.getElementById("dateInput").value;
+      if (!input) return;
+      const date = new Date(input);
+      const diffDays = Math.floor((date - baseDate) / (1000 * 60 * 60 * 24));
+      const index = (baseIndex + diffDays % 60 + 60) % 60;
+
+      const stem = stems[index % 10];
+      const branch = branches[index % 12];
+      const stemR = stemsReading[index % 10];
+      const branchR = branchesReading[index % 12];
+
+      document.getElementById("result").innerText = stem + branch;
+      document.getElementById("reading").innerText = stemR + branchR;
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText("https://あなたのサイトURL")
+        .then(() => {
+          alert("リンクをコピーしました！Instagramのプロフィールやストーリーに貼ってね📲");
+        })
+        .catch(err => {
+          console.error("コピーに失敗しました: ", err);
+        });
+    }
+  </script>
+</body>
+</html>
