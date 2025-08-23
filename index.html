@@ -1,205 +1,11 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>ilo.iloな日干支</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7388082535405880"
-     crossorigin="anonymous"></script>
-
-<!-- iPhone向けPWAっぽい表示にしたい場合は後で有効化
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
--->
-
-<style>
-  :root{
-    --ink:#333;
-    --brand:#ff68b6;
-    --white:#fff;
-  }
-
-  /* ベース：モバイル先行 */
-  html, body{
-    margin:0;
-    padding:0;
-    height:100%;
-    color:var(--ink);
-    -webkit-text-size-adjust:100%; /* iOSの自動拡大を抑える */
-  }
-
-  body{
-    font-family:'Hiragino Kaku Gothic ProN', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
-    text-align:center;
-
-    /* 背景（iOSでカクつくfixedは避ける） */
-    background-image:url('iloiloback.jpg');
-    background-repeat:no-repeat;
-    background-size:cover;
-    background-position:center;
-  }
-
-  /* 画面高を正しく扱う：アドレスバー変動に強い */
-  .wrap{
-    min-height:100svh;              /* Safari対応のビューポート高 */
-    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
-    display:flex;
-    flex-direction:column;
-    justify-content:center;         /* 縦中央 */
-    align-items:center;             /* 横中央 */
-    gap:18px;
-  }
-
-  /* 丸カード：モバイル向けに可変高さ＆タップ余白確保 */
-  .card{
-    background:rgba(255,255,255,0.6);
-    border-radius:50%;
-    width: 240px;
-    height: 240px;   /* 必要なら可変に：auto; にして padding増やす */
-    box-shadow:0 4px 20px rgba(0,0,0,0.1);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:28px;
-    backdrop-filter: blur(0.5px);   /* iOSでの表示負荷を抑え軽めに */
-  }
-
-  h1{
-    margin:0 0 2px;
-    font-size:32px;
-    letter-spacing:.02em;
-  }
-  .sub{ font-size:16px; }
-
-  /* ラベルは無し（今の見た目を維持）。入れるなら小さめに */
-  /* label{ font-size:14px; color:#444; margin:10px 0 4px; } */
-
-  input[type="date"]{
-    margin-top:12px;
-    padding:10px 12px;
-    font-size:16px;             /* iOSでのズーム防止に16px以上 */
-    border-radius:10px;
-    border:1px solid #ccc;
-    background:rgba(255,255,255,.95);
-    outline:none;
-  }
-  input[type="date"]:focus{
-    border-color:var(--brand);
-    box-shadow:0 0 0 6px rgba(255,104,182,.25);
-  }
-
-  .btn{
-    margin-top:12px;
-    padding:12px 22px;
-    font-size:16px;             /* タップしやすく */
-    color:#fff;
-    background:var(--brand);
-    border:none;
-    border-radius:999px;
-    cursor:pointer;
-    min-height:44px;            /* Apple推奨サイズ */
-    touch-action:manipulation;
-  }
-
-  .result{
-    margin-top:14px;
-    font-size:26px;
-    font-weight:700;
-  }
-  .reading{
-    margin-top:0;
-    font-size:12px;
-    color:#444;
-  }
-
-  /* SNSピルボタン（白枠） */
-  .share{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:10px;
-  }
-  .share-btn{
-    box-sizing:border-box;
-    text-decoration:none;
-    color:#fff;
-    background:transparent;
-    border:2px solid #fff;
-    border-radius:9999px;
-    padding:10px 18px;
-    line-height:1;
-    font-size:14px;
-    font-weight:600;
-    display:inline-block;
-    text-align:center;
-    min-width:108px;     /* 3つの幅をそろえる */
-    white-space:nowrap;
-    transition:background .2s ease;
-    min-height:44px;     /* タップ面積 */
-  }
-  .share-btn:hover{ background:rgba(255,255,255,.18); }
-
-  /* 応援ボタンは下側に余白を多めにして誤タップを防止 */
-  .support-btn{
-    text-decoration:none;
-    font-size:16px;
-    color:#fff;
-    background:#ff7f50;
-    padding:12px 22px;
-    border-radius:999px;
-    display:inline-block;
-    min-height:44px;
-  }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h1>ilo.ilo</h1>
-      <div class="sub">な日干支</div>
-
-      <input type="date" id="dateInput" />
-      <button class="btn" onclick="calculate()">CHECK!</button>
-
-      <div class="result" id="result"></div>
-      <div class="reading" id="reading"></div>
-    </div>
-
-    <!-- SNSシェア（カードの下） -->
-    <div class="share">
-      <a id="share-x" class="share-btn" href="#" target="_blank" rel="noopener">X</a>
-      <a id="share-line" class="share-btn" href="#" target="_blank" rel="noopener">LINE</a>
-      <button class="share-btn" type="button" onclick="copyLink()">Instagram</button>
-    </div>
-
-    <!-- 一番下：応援ボタン -->
-    <a class="support-btn" href="https://ofuse.me/izuiloilo" target="_blank" rel="noopener">izuを応援する</a>
-  </div>
-
 <script>
   const stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
   const stemsReading = ["きのえ","きのと","ひのえ","ひのと","つちのえ","つちのと","かのえ","かのと","みずのえ","みずのと"];
   const branches = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
   const branchesReading = ["ね","うし","とら","う","たつ","み","うま","ひつじ","さる","とり","いぬ","い"];
-  const baseDate = new Date(1984, 2, 31);
-  const baseIndex = 0;
 
-  function updateShareLinks(stem, branch, stemR, branchR) {
-    const url = location.href;
-    const text = "あなたの生まれた日の干支もチェック 👉 ";
-    const encodedURL = encodeURIComponent(url);
-    const encodedText = encodeURIComponent(text);
-
-    // X（Twitter）
-    document.getElementById('share-x').href =
-      `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedURL}`;
-
-    // LINE（テキスト+URL）
-    document.getElementById('share-line').href =
-      `https://social-plugins.line.me/lineit/share?url=${encodedURL}`;
-  }
+  const baseDate = new Date(1984, 2, 31); // 3月31日
+  const baseIndex = 0; // 甲子
 
   function calculate() {
     const input = document.getElementById("dateInput").value;
@@ -216,25 +22,16 @@
 
     document.getElementById("result").innerText = stem + branch;
     document.getElementById("reading").innerText = stemR + branchR;
-
-    updateShareLinks(stem, branch, stemR, branchR);
   }
 
-  function copyLink() {
-    navigator.clipboard.writeText(location.href)
-      .then(() => alert("リンクをコピーしました！Instagramのプロフィールやストーリーに貼ってね📲"))
-      .catch(err => console.error("コピーに失敗:", err));
-  }
-
-  // 表示時：今日の日付をセット＆自動計算
-  window.onload = () => {
-    const t = new Date();
-    const yyyy = t.getFullYear();
-    const mm   = String(t.getMonth()+1).padStart(2,'0');
-    const dd   = String(t.getDate()).padStart(2,'0');
-    document.getElementById("dateInput").value = `${yyyy}-${mm}-${dd}`;
+  // ページ読み込み時に今日の日付をセットして自動で計算
+  window.onload = function() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("dateInput").value = todayStr;
     calculate();
-  };
+  }
 </script>
-</body>
-</html>
