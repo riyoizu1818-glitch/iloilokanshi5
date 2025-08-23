@@ -87,21 +87,6 @@
     color: #444;
   }
 
-  /* SNSボタンの共通デザイン */
-  .share-buttons a,
-  .share-buttons button {
-    text-decoration: none;
-    font-size: 1em;
-    color: #fff;
-    background: #ff7f50;
-    padding: 8px 15px;
-    border-radius: 20px;
-    display: inline-block;
-    margin: 5px;
-    border: none;
-    cursor: pointer;
-  }
-
   /* 応援ボタン */
   .support-btn {
     text-decoration: none;
@@ -125,14 +110,6 @@
       <button onclick="calculate()">CHECK!</button>
       <div class="result" id="result">----</div>
       <div class="reading" id="reading">生年月日を選んでね</div>
-    </div>
-
-    <!-- SNSシェアボタン -->
-    <div class="share-buttons">
-      <a href="https://twitter.com/intent/tweet?text=今日の日干支をチェックしてみたよ！&url=https://あなたのサイトURL" target="_blank">🐦 Twitter</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u=https://あなたのサイトURL" target="_blank">📘 Facebook</a>
-      <a href="https://social-plugins.line.me/lineit/share?url=https://あなたのサイトURL" target="_blank">💚 LINE</a>
-      <button onclick="copyLink()">📸 Instagram</button>
     </div>
 
     <!-- 応援ボタン -->
@@ -164,14 +141,14 @@
       document.getElementById("reading").innerText = stemR + branchR;
     }
 
-    function copyLink() {
-      navigator.clipboard.writeText("https://あなたのサイトURL")
-        .then(() => {
-          alert("リンクをコピーしました！Instagramのプロフィールやストーリーに貼ってね📲");
-        })
-        .catch(err => {
-          console.error("コピーに失敗しました: ", err);
-        });
+    // ページを開いたら今日を初期表示
+    window.onload = () => {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth()+1).padStart(2,"0");
+      const dd = String(today.getDate()).padStart(2,"0");
+      document.getElementById("dateInput").value = `${yyyy}-${mm}-${dd}`;
+      calculate();
     }
   </script>
 </body>
